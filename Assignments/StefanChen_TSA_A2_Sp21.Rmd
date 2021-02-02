@@ -1,0 +1,265 @@
+---
+title: "ENV 790.30 - Time Series Analysis for Energy Data | Spring 2021"
+subtitle: "Assignment 2 - Due date 02/05/21"
+author: "Stefan Chen"
+output: pdf_document
+geometry: margin=1.2cm
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.width=7, fig.height=4.2)
+```
+
+## Submission Instructions
+
+You should open the .rmd file corresponding to this assignment on RStudio. The file is available on our class repository on Github.   
+
+Once you have the file open on your local machine the first thing you will do is change "Student Name" on line 4 with your name. 
+Then you will start working through the assignment by  **creating code and output** that answer each question. Be sure to use this assignment document. Your report should contain the answer to each question and any plots/tables you obtained (when applicable).
+
+When you have completed the assignment, **Knit** the text and code into a single PDF file. Rename the pdf file such that it includes your first and last name (e.g., "LuanaLima_TSA_A02_Sp21.Rmd"). Submit this pdf using Sakai. 
+
+## R packages
+
+R packages needed for this assignment:"forecast","tseries", and "dplyr". Install these packages, if you haven't done yet. Do not forget to load them before running your script, since they are NOT default packages.\\
+
+```{r include=FALSE}
+#Load/install required package here
+library(tseries)
+library(forecast)
+library(dplyr)
+library(readxl)
+
+#setting digit to be maximum of 6
+options(digits=6)
+```
+
+
+## Data set information  
+
+Consider the data provided in the spreadsheet "Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx" on our **Data** folder. The data comes from the US Energy Information and Administration and corresponds to the January 2021 Monthly Energy Review. The spreadsheet is ready to be used. Use the command $read.table()$ to import the data in R or $panda.read\_excel()$ in Python (note that you will need to import pandas package). }
+
+```{r include=FALSE}
+#Importing data set
+setwd("/Users/stefanchen/Documents/Duke/Classes/Spring 2021/ENV 790/GitHub/ENV790_30_TSA_S2021/Data")
+re.df<-read_xlsx("Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx", skip=10)
+```
+
+
+## Question 1
+You will work only with the following columns: Total Biomass Energy Production, Total Renewable Energy Production, Hydroelectric Power Consumption. Create a data frame structure with these three time series only. Use the command head() to verify your data.
+
+\medskip 
+\medskip 
+
+```{r include=FALSE}
+#Create data frame with the selected column
+re_select<-re.df %>%
+  select("Total Biomass Energy Production", 
+         "Total Renewable Energy Production", 
+         "Hydroelectric Power Consumption")
+
+#Remove rows of units by selecting [numeric rows, all columns]
+re_select<-re_select[!is.na(as.numeric(re_select$'Total Biomass Energy Production')),]
+
+#Transforming characters to numeric
+re_select<-sapply(re_select,as.numeric) %>%
+  as.data.frame() 
+
+#Confirm data type
+str(re_select)
+```
+
+Below is the first six rows generated from head() function as a confirmation of a functional data frame.
+
+```{r echo=FALSE}
+#Confirm the first 6 values
+head(re_select)
+```
+
+</div>
+
+## Question 2
+Transform your data frame in a time series object and specify the starting point and frequency of the time series using the function ts().
+
+\medskip 
+\medskip 
+
+The time series is set to start on January of 1973 (start=c(1973,1)) and with a monthly frequency (frequency=12). Below is the first six rows of the time series.
+
+
+```{r echo=FALSE}
+#transform dataframe to time series
+ts_select<-ts(re_select, start=c(1973,1), frequency=12)
+
+#transform each columns in data frame to time series
+ts_bio<-ts(re_select[,1], start=1973, frequency=12)
+ts_re<-ts(re_select[,2], start=1973, frequency=12)
+ts_hydro<-ts(re_select[,3], start=1973, frequency=12)
+
+head(ts_select)
+```
+
+</div>
+
+## Question 3
+Compute mean and standard deviation for these three series.
+
+\medskip 
+\medskip 
+
+**Total Biomass Energy Production**
+
+\medskip 
+
+-Mean: 270.70 
+
+-Standard Deviation: 87.36
+
+\medskip 
+
+**Total Renewable Energy Production**
+
+\medskip 
+
+-Mean: 572.73 
+
+-Standard Deviation: 168.46
+
+\medskip 
+
+**Hydroelectric Power Consumption**
+
+\medskip 
+
+-Mean: 236.95 
+
+-Standard Deviation: 43.90
+
+```{r include=FALSE}
+#c(mean, sd)
+round(c(mean(ts_bio),sd(ts_bio)),2)
+round(c(mean(ts_re),sd(ts_re)),2)
+round(c(mean(ts_hydro),sd(ts_hydro)),2)
+```
+
+</div>
+
+## Question 4
+Display and interpret the time series plot for each of these variables. Try to make your plot as informative as possible by writing titles, labels, etc. For each plot add a horizontal line at the mean of each series in a different color.
+
+\medskip 
+\medskip 
+
+**Total Biomass Energy Production**
+
+Below is a graph of total biomass energy production from 1973 to 2020. The graph demonstrates a significant growth in biomass energy production between circa 1975 and 1985 as well as between circa 2000 and 2012.
+
+```{r echo=FALSE}
+#plot times series for Total Biomass Energy Production
+plot(ts_bio, 
+     main="Total Biomass Energy Production", 
+     ylab="Trillion Btu",
+     type="l")
+abline(h=270.70, col="red")   #adding a horizontal line
+```
+
+\medskip 
+
+**Total Renewable Energy Production** 
+
+Below is a graph of total renewable energy production from 1973 to 2020. The graph demonstrates a significant growth in renewable energy production since circa 2010 and have since exceed the mean production average of the 47-year period.
+
+```{r echo=FALSE}
+#plot times series for Total Renewable Energy Production
+plot(ts_re,
+     main="Total Renewable Energy Production",
+     ylab="Trillion Btu",
+     type="l")
+abline(h=572.73, col="red")   #adding a horizontal line
+```
+
+\medskip 
+
+**Hydroelectric Power Consumption** 
+
+Below is a graph of hydroelectric power consumption from 1973 to 2020. The graph demonstrates a stable consumption of hydroelectric power in the 47-year period since 1973. Additionally, it appears that variation was significant seasonally.
+
+```{r echo=FALSE}
+#plot times series for Hydroelectric Power Consumption
+plot(ts_hydro,
+     main="Hydroelectric Power Consumption",
+     ylab="Trillion Btu",
+     type="l")
+abline(h=236.95, col="red")   #adding a horizontal line
+```
+
+</div>
+
+## Question 5
+Compute the correlation between these three series. Are they significantly correlated? Explain your answer.
+
+\medskip 
+\medskip 
+
+Correlation(renewable energy production, biomass energy production): 0.9235 
+
+Correlation(biomass energy production, hydropower consumption): -0.2556 
+
+Correlation(hydropower consumption, renewable energy production): -0.0028 
+
+Based on the results, it appears that renewable energy production and biomass energy production are significantly positively correlated. On the other hand, hydropower consumption is negatively correlated with both biomass energy production and renewable energy production, but weakly correlated with renewable energy production only.
+
+```{r include=FALSE}
+#correlation between the variables
+cor(ts_re, ts_bio)
+cor(ts_bio, ts_hydro)
+cor(ts_hydro, ts_re)
+```
+
+</div>
+
+## Question 6
+Compute the autocorrelation function (ACF) from lag 1 up to lag 40 for these three variables. What can you say about these plots? Do the three of them have the same behavior?
+
+\medskip 
+\medskip 
+
+The autocorrelation of renewable energy production and biomass energy production show similar behavior of strong autocorrelation with slight decrease over time. Autocorrelation of hydropower consumption, on the other hand, shows a flunctuating trend. 
+
+```{r}
+#autocorrelation between the variables
+acf(ts_re, lag.max = 40, main="ACF of Biomass Energy Production")
+```
+
+```{r}
+acf(ts_bio, lag.max = 40, main="ACF of Renewable Energy Production")
+```
+
+```{r}
+acf(ts_hydro, lag.max = 40, main="ACF of Hydropower Consumption")
+```
+
+</div>
+
+## Question 7
+Compute the partial autocorrelation function (PACF) from lag 1 to lag 40 for these three variables. How these plots differ from the ones in Q6?
+
+\medskip 
+\medskip 
+
+The PACF plots of all three variables demonstrated similar trend which indicates that intermediate variables in renewable energy production and biomass energy production have a stronger influence on the autocorrelation of the ACF.
+
+```{r}
+#partial autocorrelation between the variables
+pacf(ts_re, lag.max = 40, main="PACF of Biomass Energy Production")
+```
+
+```{r}
+pacf(ts_bio, lag.max = 40, main="PACF of Renewable Energy Production")
+```
+
+```{r}
+pacf(ts_hydro, lag.max = 40, main="PACF of Hydropower Consumption")
+```
+
