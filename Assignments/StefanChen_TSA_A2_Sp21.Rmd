@@ -135,7 +135,7 @@ head(ts_select)
 
 -Standard Deviation: 43.90
 
-```{r include=FALSE}
+```{r include=TRUE}
 #c(mean, sd)
 round(c(mean(ts_bio),sd(ts_bio)),2)
 round(c(mean(ts_re),sd(ts_re)),2)
@@ -272,7 +272,7 @@ pacf(ts_hydro, lag.max = 40, main="PACF of Hydropower Consumption")
 
 \pagebreak
 
-## Apendix
+## Appendix
 
 ```{r results='hide', warning=FALSE, message=FALSE, error=FALSE, fig.show='hide'}
 #Load/install required package here
