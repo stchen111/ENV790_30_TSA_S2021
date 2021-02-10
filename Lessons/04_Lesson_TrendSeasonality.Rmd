@@ -18,12 +18,13 @@ knitr::opts_chunk$set(echo = TRUE,tidy.opts=list(width.cutoff=80), tidy=FALSE)
 Second R code chunk is for loading packages. By setting message = FALSE, the code will appear but not the output. 
 
 ```{r package, message=FALSE}
+# install.packages("lubridate")
 library(lubridate)
 library(ggplot2)
 library(forecast)
+# install.packages("Kendall")
 library(Kendall)
 library(tseries)
-
 ```
 
 ## Importing data
@@ -43,7 +44,7 @@ nobs <- nrow(raw_inflow_data)
 #creating the data frame
 colnames(raw_inflow_data)=c("Month","Year", "HP1", "HP2","HP3","HP4", "HP5",
                             "HP6","HP7", "HP8","HP9","HP10", "HP11","HP12", 
-                            "HP13", "HP14","HP15")
+                            "HP13", "HP14","HP15") #adding column name w colnames()=c()
 
 #Checking data
 head(raw_inflow_data)
@@ -58,9 +59,9 @@ Here we use the function my() from package lubridate.
 my_date <- paste(raw_inflow_data[,1],raw_inflow_data[,2],sep="-")
 my_date <- my(my_date)  #function my from package lubridate
 head(my_date)
-#add that to inflow_data and store in a new data frame 
+#add that to inflow_data and store in a new data frame
 inflow_data <- cbind(my_date,raw_inflow_data[,3:(3+nhydro-1)])
-head(inflow_data)
+inflow_data
 
 ```
 
