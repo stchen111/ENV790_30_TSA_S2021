@@ -205,7 +205,7 @@ abline(h=236.95, col="red")   #adding a horizontal line
 <br />
 <br />
 
-Correlation(renewable energy production, biomass energy production): 0.9235 
+Correlation(renewable energy production, biomass energy production): 0.9234 
 
 Correlation(biomass energy production, hydropower consumption): -0.2556 
 
@@ -213,7 +213,7 @@ Correlation(hydropower consumption, renewable energy production): -0.0028
 <br />
 Based on the results, it appears that renewable energy production and biomass energy production are significantly positively correlated. On the other hand, hydropower consumption is negatively correlated with both biomass energy production and renewable energy production, but weakly correlated with renewable energy production only.
 
-```{r include=FALSE}
+```{r }
 #correlation between the variables
 cor(ts_re, ts_bio)
 cor(ts_bio, ts_hydro)
