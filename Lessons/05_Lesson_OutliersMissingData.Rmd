@@ -25,7 +25,7 @@ library(Kendall)
 library(tseries)
 
 #New packages for M5
-#install.packages("outliers")
+# install.packages("outliers")
 library(outliers)
 #install.packages("tidyverse")
 library(tidyverse)
@@ -129,9 +129,9 @@ The stats package has a function called decompose(). This function only take tim
 The random component is the time series without seasonal and trend component. Let's try to identify outliers by looking at the random component only.
 
 ```{r}
-#Using R decompose function
+#Using R decompose function - strip observation of trend, seasonal, and random component
 iHP=1
-decompose_inflow_data=decompose(ts_inflow_data[,iHP],"additive")
+decompose_inflow_data<-decompose(ts_inflow_data[,iHP],"additive")
 plot(decompose_inflow_data)
 
 #Inspect random component
@@ -139,7 +139,7 @@ inflow_random <- decompose_inflow_data$random
 mean_inflow <- mean(inflow_random)  
 sd_inflow <- sd(inflow_random)
 
-cat(mean_inflow,sd_inflow)
+cat(mean_inflow,sd_inflow) #Concatenate function
 #Note random series has some missing values, that is why we got NAs
 
 #Compute mean and standard deviation without missing values
@@ -217,8 +217,9 @@ When working with time series you cannot simply remove an outlier. Remember that
 outlier(inflow_random$inflow) 
                   
 #Function chisq.out.test check if extreme value is outlier
+#chisq.out.test(objects,variance)
 chi_test <- chisq.out.test(inflow_random$inflow,var(inflow_random$inflow))
-print(chi_test) #look at the p-value to find the decision 
+print(chi_test) #look at the p-value to find the decision (on the highest value)
 
 #If you need to remove outlier use rm.outlier()
 inflow_random$inflow <- rm.outlier(inflow_random$inflow,fill=TRUE) #using fill equal true the value will be replaced by mean or median 

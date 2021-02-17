@@ -202,10 +202,11 @@ beta_int=seas_means_model$coefficients[1]
 beta_coeff=seas_means_model$coefficients[2:12]
 
 #compute seasonal component
-inflow_seas_comp=array(0,nobs)
+inflow_seas_comp=array(0,nobs) #creating a vector of zeros - then replacing zeros with values
 for(i in 1:nobs){
   inflow_seas_comp[i]=(beta_int+beta_coeff%*%dummies[i,])
-} #%*% is the inner product
+} #replace vectors with inner prodcut
+#%*% is the inner product
 
 beta_coeff
 dummies
