@@ -1,7 +1,7 @@
 ---
 title: "Lab 5: Outliers and Missing Data"
 author: "Luana Lima"
-date: "02/11/2021"
+date: "02/17/2021"
 output: pdf_document
 ---
 
@@ -73,9 +73,13 @@ ggplot(wind_data, aes(x = DATE, y = AWND.1)) +
   ylab("Average Wind Speed") 
 
 ```
-## Using pre-built functio to clean series
+## Using pre-built function to clean series
 
+<<<<<<< HEAD
 tsclean() from 'package' forecast identify and replace outliers and missing values in a time series using linear interpolation.
+=======
+tsclean() from package 'forecast' identify and replace outliers and missing values in a time series using linear interpolation.
+>>>>>>> 039bfb2d387fdd5e4b7d4c9d8e9f530496a36ebb
 
 ```{r}
 #the function would be able to figure out the best replacing data
@@ -84,9 +88,15 @@ clean_wind_data <- tsclean(ts_wind_data)  #object should be a time series
 
 full_wind_data <- data_frame(Date=wind_data$DATE, Wind = wind_data$AWND.1, Wind_Clean = as.numeric(clean_wind_data))
 
+<<<<<<< HEAD
 ggplot(full_wind_data, ) +
   geom_line(aes(x = Date, y = Wind_Clean), color = "red") + #the cleaned data
   geom_line(aes(x = Date, y = Wind), color = "black") + #original data
+=======
+ggplot(full_wind_data) +
+  geom_line(aes(x = Date, y = Wind_Clean), color = "red") +
+  geom_line(aes(x = Date, y = Wind), color = "black") +
+>>>>>>> 039bfb2d387fdd5e4b7d4c9d8e9f530496a36ebb
   ylab("Average Wind Speed") 
   
 #(color="XXX") -> assign specific variable
@@ -112,6 +122,7 @@ Additional info on decompose()
 
 ```{r}
 #Ex1: Using R decompose function decompose the wind data in seasonal, trend and random
+<<<<<<< HEAD
 decompose_wind_data<-decompose(clean_wind_data)
 plot(decompose_wind_data)
 
@@ -122,10 +133,20 @@ wind_seasonal <- decompose_wind_data$seasonal
 
 #Ex3: Create one data frame with all three vector and the Date columns from wind_data
 df_wind_decomposed <- data.frame(wind_trend,wind_seasonal,wind_random)
+=======
+
+
+#Ex2: Store the three component in separate vector
+  
+
+#Ex3: Create one data frame with all three vector and the Date columns from wind_data
+
+>>>>>>> 039bfb2d387fdd5e4b7d4c9d8e9f530496a36ebb
 
 #Ex4: Inspect the data frame using head() and tail()
-head(df_wind_decomposed,10)
-tail(df_wind_decomposed,10)
+
+
+
 # Discuss the results
 
 # use prior and latter six observation to compute the seventh observation - use total of thirteen observations in total
@@ -143,6 +164,8 @@ rep_trend<-array(NA,length(clean_wind_data))
 for (i in 7:length(clean_wind_data)-6){
   rep_trend[i]=mean(clean_wind_data[i-6:i+6])
 }
+
+#Ex6: Try to reproduce the seasonal component from decompose().
 
 #Ex6: Try to reproduce the seasonal component from decompose().
 
